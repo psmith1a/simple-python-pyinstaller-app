@@ -9,22 +9,25 @@ pipeline {
 
       }
       steps {
-        sh 'sh \'python -m py_compile sources/add2vals.py sources/calc.py\''
+        sh 'python -m py_compile sources/add2vals.py sources/calc.py'
       }
     }
     stage('Test') {
-       agent {
-          docker {
-             image 'qnib/pytest'
-          }
-       }
-      steps {
-        sh 'sh \'py.test --verbose --junit-xml test-reports/results.xml soures/test_calc.py\''
+      agent {
+        docker {
+          image 'qnib/pytest'
+        }
+
       }
       post {
-         always {
-             junit 'test-reports/results.xml'
-         }
+        always {
+          junit 'test-reports/results.xml'
+
+        }
+
+      }
+      steps {
+        sh 'sh \'py.test --verbose --junit-xml test-reports/results.xml soures/test_calc.py\''
       }
     }
   }
