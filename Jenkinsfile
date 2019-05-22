@@ -30,5 +30,10 @@ pipeline {
         sh 'py.test --verbose --junit-xml test-reports/results.xml soures/test_calc.py'
       }
     }
+    stage('Deliver') {
+      steps {
+        sh 'pyinstaller --onefile sources/add2vals.py'
+      }
+    }
   }
 }
