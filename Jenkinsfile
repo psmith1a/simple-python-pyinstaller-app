@@ -6,7 +6,6 @@ pipeline {
         docker {
           image 'python:2-alpine'
         }
-
       }
       steps {
         sh 'python -m py_compile sources/add2vals.py sources/calc.py'
@@ -17,22 +16,30 @@ pipeline {
         docker {
           image 'qnib/pytest'
         }
-
       }
       post {
         always {
           junit 'test-reports/results.xml'
 
         }
-
       }
       steps {
         sh 'py.test --verbose --junit-xml test-reports/results.xml soures/test_calc.py'
       }
     }
     stage('Deliver') {
+      docker {
+        agent {
+         d image 'cdrx/pyinstaller-linux:python2'
+         }
+      }
       steps {
         sh 'pyinstaller --onefile sources/add2vals.py'
+      }
+      post {
+          success {
+             archiveArtifacts 'dist/add2vals'
+          }
       }
     }
   }
